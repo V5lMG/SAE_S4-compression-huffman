@@ -1,5 +1,5 @@
 target/
-!.mvn/wrapper/maven-wrapper.jar
+.mvn/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -13,7 +13,7 @@ Application/jdk/
 Application/jdk/*
 
 # Fichiers générés de tests lourds
-test/comrepssiontest/
+test/test-compression/
 test/test1/
 test/*.bin
 test/arbreHuffman.txt
