@@ -10,6 +10,7 @@ import fr.iutrodez.compresseurhuffman.outils.GestionPrompt;
 import fr.iutrodez.compresseurhuffman.outils.StatistiquesCompresseur;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import static java.lang.System.out;
 
@@ -25,9 +26,14 @@ import static java.lang.System.out;
  * @author R. Xaviertaborda
  * @author J. Seychelles
  * @author B. Thenieres
- * @version 1.0
+ * @version 2.0
  */
 public class ApplicationLigneCommande {
+
+    /**
+     * Scanner pour la lecture sur console standard (fallback lorsque System.console() est null).
+     */
+    private static final Scanner SCANNER_CONSOLE = new Scanner(System.in);
 
     /**
      * Instance de {@link GestionPrompt} utilisée pour gérer
@@ -103,8 +109,6 @@ public class ApplicationLigneCommande {
         out.println("Fin de l'application.");
         afficherSeparateur();
     }
-
-
 
     /**
      * Lance le processus de compression d'un fichier texte en utilisant
@@ -233,31 +237,25 @@ public class ApplicationLigneCommande {
     /**
      * Demande à l'utilisateur de saisir un choix valide.
      * Répète la demande jusqu'à ce qu'un choix valide soit saisi.
-     * Gère les entrées non valides en affichant un message d'erreur
-     * et en redemandant.
+     * Gère les environnements avec ou sans console native (IDE, redirections).
      *
      * @return le choix de l'utilisateur.
      */
     private static int demanderChoixUtilisateur() {
         out.print("Votre choix : ");
-        /*
-         * Lit une ligne de texte depuis la console.
-         * Cette méthode attend que l'utilisateur saisisse une ligne de texte
-         * et appuie sur la touche "Entrée". La ligne saisie est ensuite
-         * renvoyée sous forme de chaîne de caractères.
-         */
-        String input = System.console().readLine();
+        String input = null;
+        if (System.console() != null) {
+            input = System.console().readLine();
+        } else if (SCANNER_CONSOLE.hasNextLine()) {
+            input = SCANNER_CONSOLE.nextLine();
+        }
+
+        if (input == null) {
+            return 4; // Quitter si le flux d'entrée est terminé
+        }
+
         try {
-            /*
-             * Convertit la chaîne saisie par l'utilisateur en un entier.
-             * Si la chaîne saisie est un entier valide,
-             * cette méthode renvoie cet entier.
-             * Si la chaîne saisie ne peut pas être interprétée
-             * comme un entier valide, une exception
-             * de type NumberFormatException est levée et
-             * est capturée dans le bloc catch.
-             */
-            return Integer.parseInt(input);
+            return Integer.parseInt(input.trim());
         } catch (NumberFormatException e) {
             out.println("Veuillez saisir un numéro valide.");
             return demanderChoixUtilisateur();

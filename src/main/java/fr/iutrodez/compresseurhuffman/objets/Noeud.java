@@ -15,9 +15,9 @@ package fr.iutrodez.compresseurhuffman.objets;
  * @author R. Xaviertaborda
  * @author J. Seychelles
  * @author B. Thenieres
- * @version 1.0
+ * @version 2.0
  */
-public class Noeud {
+public class Noeud implements Comparable<Noeud> {
     /**
      * Le caractère représenté par ce nœud.
      */
@@ -140,5 +140,19 @@ public class Noeud {
      */
     public boolean isFeuille() {
         return gauche == null && droite == null;
+    }
+
+    /**
+     * Compare deux nœuds en fonction de leur fréquence.
+     *
+     * @param autre Le second nœud à comparer.
+     * @return Valeur négative, zéro ou positive selon l'ordre des fréquences.
+     */
+    @Override
+    public int compareTo(Noeud autre) {
+        if (autre == null) {
+            return 1;
+        }
+        return Integer.compare(this.frequence, autre.frequence);
     }
 }

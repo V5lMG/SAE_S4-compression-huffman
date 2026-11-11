@@ -46,8 +46,10 @@ flowchart TD
 1. **Comptage des fréquences** : Calcul du nombre d'apparitions de chaque octet dans une `HashMap<Byte, Integer>`.
 2. **Construction de l'arbre** :
    - Chaque octet forme initialement une feuille (`Noeud`).
+   - Les nœuds sont ordonnés dans une file de priorité (`PriorityQueue<Noeud>`) basée sur `Comparable<Noeud>`, garantissant une complexité optimale en $O(N \log N)$.
    - À chaque étape, les 2 nœuds ayant les fréquences les plus basses sont extraits et combinés sous un nouveau nœud parent dont la fréquence est la somme de ses enfants.
    - Le processus se répète jusqu'à obtenir un nœud racine unique.
+   - Gestion des cas limites : pour un fichier avec un symbole unique, le nœud est rattaché à une racine artificielle pour lui attribuer le code binaire `'0'`. Pour un fichier vide, une archive vide (0 bits) est produite sans erreur.
 3. **Génération des codes binaires** :
    - Parcours en profondeur (DFS) depuis la racine : branche gauche = `'0'`, branche droite = `'1'`.
    - Les symboles les plus fréquents ont les codes les plus courts.

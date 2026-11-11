@@ -1,3 +1,7 @@
+/*
+ * Pas de copyright, ni de droit d'auteur.
+ * DecompressionHuffman.java                 27/05/2024
+ */
 package fr.iutrodez.compresseurhuffman.huffman;
 
 import fr.iutrodez.compresseurhuffman.outils.GestionFichier;
@@ -25,7 +29,7 @@ import java.util.Map;
  * @author R. Xaviertaborda
  * @author J. Seychelles
  * @author B. Thenieres
- * @version 1.0
+ * @version 2.0
  */
 public class DecompressionHuffman {
 
@@ -67,24 +71,25 @@ public class DecompressionHuffman {
 
     /**
      * Détermine le chemin vers le fichier de l'arbre Huffman basé
-     * sur le chemin du fichier source.
+     * sur le chemin du fichier source. Compatible tous systèmes d'exploitation.
      *
      * @return Le chemin du fichier de l'arbre Huffman.
      * @throws IOException Si le fichier de l'arbre n'est pas trouvé.
      */
     private String trouverCheminArbre() throws IOException {
-        int dernierSeparateur = cheminFichierSource.lastIndexOf("\\");
-        String cheminArbre =
-                cheminFichierSource.substring(0,dernierSeparateur + 1)
-                        + "arbreHuffman.txt";
+        File fichierSource = new File(cheminFichierSource);
+        File dossierParent = fichierSource.getParentFile();
+        File fichierArbre = (dossierParent != null)
+                ? new File(dossierParent, "arbreHuffman.txt")
+                : new File("arbreHuffman.txt");
 
-        if (!new File(cheminArbre).exists()) {
+        if (!fichierArbre.exists()) {
             throw new IOException("Erreur: fichier de l'arbre d'Huffman "
                     + "introuvable. Veuillez le placer dans le même "
                     + "répertoire que le fichier à décompresser avec le nom "
                     + "\"arbreHuffman.txt\"");
         }
-        return cheminArbre;
+        return fichierArbre.getPath();
     }
 
     /**
@@ -115,8 +120,7 @@ public class DecompressionHuffman {
         String code =
                 GestionFichier.lireFichierBinaire(cheminFichierSource);
 
-        byte[] bytes =
-                transformerChaineEnBytes(code, racine);
+        byte[] bytes = transformerChaineEnBytes(code, racine);
 
         GestionFichier.ecrireFichierDestination(bytes,
                 cheminFichierDestination);
@@ -134,10 +138,6 @@ public class DecompressionHuffman {
      *         est le code Huffman correspondant.
      */
     private Map<Byte, String> genererTableDeCodeHuffman(String[] arbre) {
-        /*
-         * Utilisation d'une HashMap, la description de HashMap
-         * a été faite dans CompressionHuffman.java
-         */
         Map<Byte, String> tableDeCodeHuffman = new HashMap<>();
         for (String line : arbre) {
             if (!line.isBlank()) {
@@ -167,19 +167,13 @@ public class DecompressionHuffman {
     private static Noeud construireArbreHuffmanDepuisMap(
             Map<Byte, String> codeHuffmanMap
     ) {
-
         Noeud racine = new Noeud();
 
-        /*
-         * Parcours de chaque clé de la map.
-         * keySet() : Renvoie un ensemble des clés contenues dans la map.
-         */
         for (Byte caractere : codeHuffmanMap.keySet()) {
             String chemin = codeHuffmanMap.get(caractere);
 
             Noeud noeudCourant = racine;
 
-            /* toCharArray() : Convertit la chaîne en tableau de caractères.*/
             for (char direction : chemin.toCharArray()) {
                 if (direction == '0') {
                     if (noeudCourant.getGauche() == null) {
@@ -210,14 +204,11 @@ public class DecompressionHuffman {
      * @return Un tableau de bytes représentant les caractères décodés.
      */
     private static byte[] transformerChaineEnBytes(String bits,
-                                                      Noeud racine) {
-        /*
-         * Crée un ByteArrayOutputStream pour écrire des données
-         * dans un buffer de mémoire. Ce buffer ajuste automatiquement
-         * sa taille selon les besoins, ce qui évite de spécifier
-         * une taille initiale. Les données peuvent ensuite être récupérées
-         * facilement sous forme de tableau de bytes.
-         */
+                                                   Noeud racine) {
+        if (bits == null || bits.isEmpty() || racine == null) {
+            return new byte[0];
+        }
+
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         Noeud noeudCourant = racine;
 
@@ -225,7 +216,7 @@ public class DecompressionHuffman {
             noeudCourant = (bit == '0') ? noeudCourant.getGauche()
                     : noeudCourant.getDroite();
 
-            if (noeudCourant.isFeuille()) {
+            if (noeudCourant != null && noeudCourant.isFeuille()) {
                 byteStream.write(noeudCourant.getCaractere());
                 noeudCourant = racine;
             }

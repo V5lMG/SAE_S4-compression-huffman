@@ -14,7 +14,3 @@ Bienvenue dans la documentation technique et utilisateur du projet **Compresseur
    - Compilation et exécution
    - Utilisation en mode interactif (Menu)
    - Utilisation en ligne de commande (CLI)
-3. [Revue Critique & Axes d'Amélioration](analyse_critique.md)
-   - Points forts du projet
-   - Faiblesses et dettes techniques identifiées
-   - Recommandations d'optimisation (I/O streaming, PriorityQueue, intégration de l'en-tête)

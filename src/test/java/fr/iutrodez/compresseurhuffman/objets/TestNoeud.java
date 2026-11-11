@@ -68,4 +68,16 @@ public class TestNoeud {
         nonFeuille.setDroite(new Noeud());
         assertFalse(nonFeuille.isFeuille());
     }
+
+    @Test
+    public void testCompareTo() {
+        Noeud n1 = new Noeud(5);
+        Noeud n2 = new Noeud(10);
+        Noeud n3 = new Noeud(5);
+
+        assertTrue(n1.compareTo(n2) < 0);
+        assertTrue(n2.compareTo(n1) > 0);
+        assertEquals(0, n1.compareTo(n3));
+        assertEquals(1, n1.compareTo(null));
+    }
 }
